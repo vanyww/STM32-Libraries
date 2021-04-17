@@ -31,7 +31,7 @@ SDeviceSettingUpdateStatus SDeviceSettingsTryUpdateValue(__SDEVICE_HANDLE(SDevic
           settingDescription->Size - (offset + length));
 
    SDeviceSettingSetStatus setStatus;
-   setStatus = settingDescription->WriteValueFunction(handle, settingDescription->Handle, renewedSettingValue);
+   setStatus = settingDescription->WriteValueFunction(settingDescription->Handle, renewedSettingValue);
 
    if(unlikely(setStatus == SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR))
       return SDEVICE_SETTING_UPDATE_STATUS_HANDLED_ERROR;
@@ -41,7 +41,7 @@ SDeviceSettingUpdateStatus SDeviceSettingsTryUpdateValue(__SDEVICE_HANDLE(SDevic
    {
       memcpy(renewedSettingValue + offset, settingDescription->ValueStorage + offset, length);
 
-      setStatus = settingDescription->WriteValueFunction(handle, settingDescription->Handle, renewedSettingValue);
+      setStatus = settingDescription->WriteValueFunction(settingDescription->Handle, renewedSettingValue);
 
       /* if reverted setting value still causes error, return critical error */
       if(unlikely(setStatus != SDEVICE_SETTING_SET_STATUS_OK))

@@ -49,7 +49,9 @@ __SDEVICE_INITIALIZE_DYNAMIC_DATA_DECLARATION(PLD330, handle)
 
 __SDEVICE_SET_SETTING_DECLARATION(PLD330, StepAngle, handle, value)
 {
-   if(unlikely(handle->IsInitialized != true))
+   __SDEVICE_HANDLE(PLD330) *device_handle = handle;
+
+   if(unlikely(device_handle->IsInitialized != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
    float angle = *(float*)value;
@@ -57,14 +59,16 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, StepAngle, handle, value)
    if(unlikely(angle <= 0.f))
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
-   handle->Settings->StepAngle = angle;
+   device_handle->Settings->StepAngle = angle;
 
    return SDEVICE_SETTING_SET_STATUS_OK;
 }
 
 __SDEVICE_SET_SETTING_DECLARATION(PLD330, PowerState, handle, value)
 {
-   if(unlikely(handle->IsInitialized != true))
+   __SDEVICE_HANDLE(PLD330) *device_handle = handle;
+
+   if(unlikely(device_handle->IsInitialized != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
    PLD330_PowerState powerState = *(PLD330_PowerState*)value;
@@ -72,17 +76,19 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, PowerState, handle, value)
    if(unlikely(__PLD330_IS_VALID_POWER_STATE(powerState) != true))
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
-   if(unlikely(handle->Constant->SetEnablePinStateFunction(handle, powerState) != true))
+   if(unlikely(device_handle->Constant->SetEnablePinStateFunction(handle, powerState) != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
-   handle->Settings->PowerState = powerState;
+   device_handle->Settings->PowerState = powerState;
 
    return SDEVICE_SETTING_SET_STATUS_OK;
 }
 
 __SDEVICE_SET_SETTING_DECLARATION(PLD330, MicrostepMode, handle, value)
 {
-   if(unlikely(handle->IsInitialized != true))
+   __SDEVICE_HANDLE(PLD330) *device_handle = handle;
+
+   if(unlikely(device_handle->IsInitialized != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
    PLD330_MicrostepMode microstepMode = *(PLD330_MicrostepMode*)value;
@@ -91,22 +97,24 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, MicrostepMode, handle, value)
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
    const PLD330_MicrostepConfig *microstepConfig = &_microstepConfigs[microstepMode];
-   uint_fast32_t maxOneTimeSteps = handle->Constant->MaxOneTimePulses / microstepConfig->Ratio;
+   uint_fast32_t maxOneTimeSteps = device_handle->Constant->MaxOneTimePulses / microstepConfig->Ratio;
 
    if(unlikely(maxOneTimeSteps == 0))
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
-   handle->Dynamic.MicrostepsConfig = microstepConfig;
-   handle->Dynamic.MaxOneTimeSteps = maxOneTimeSteps;
+   device_handle->Dynamic.MicrostepsConfig = microstepConfig;
+   device_handle->Dynamic.MaxOneTimeSteps = maxOneTimeSteps;
 
-   handle->Settings->MicrostepMode = microstepMode;
+   device_handle->Settings->MicrostepMode = microstepMode;
 
    return SDEVICE_SETTING_SET_STATUS_OK;
 }
 
 __SDEVICE_SET_SETTING_DECLARATION(PLD330, Speed, handle, value)
 {
-   if(unlikely(handle->IsInitialized != true))
+   __SDEVICE_HANDLE(PLD330) *device_handle = handle;
+
+   if(unlikely(device_handle->IsInitialized != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
    float speed = *(float*)value;
@@ -114,12 +122,12 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, Speed, handle, value)
    if(unlikely(speed < 0.f || speed > 1.f))
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
-   uint_fast32_t frequency = 1 + (uint_fast32_t)((handle->Dynamic.MicrostepsConfig->MaxFrequency - 1) * speed);
+   uint_fast32_t frequency = 1 + (uint_fast32_t)((device_handle->Dynamic.MicrostepsConfig->MaxFrequency - 1) * speed);
 
-   if(unlikely(handle->Constant->SetPulsesFrequencyFunction(handle, frequency) != true))
+   if(unlikely(device_handle->Constant->SetPulsesFrequencyFunction(handle, frequency) != true))
       return SDEVICE_SETTING_SET_STATUS_OK;
 
-   handle->Settings->Speed = speed;
+   device_handle->Settings->Speed = speed;
 
    return SDEVICE_SETTING_SET_STATUS_OK;
 }
