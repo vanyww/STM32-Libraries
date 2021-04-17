@@ -15,7 +15,9 @@ __SDEVICE_INITIALIZE_DYNAMIC_DATA_DECLARATION(ModbusRTU, handle)
 
 __SDEVICE_SET_SETTING_DECLARATION(ModbusRTU, SlaveAddress, handle, value)
 {
-   if(unlikely(handle->IsInitialized != true))
+   __SDEVICE_HANDLE(ModbusRTU) *device_handle = handle;
+
+   if(unlikely(device_handle->IsInitialized != true))
       return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
 
    uint8_t address = *(uint8_t*)value;
@@ -24,7 +26,7 @@ __SDEVICE_SET_SETTING_DECLARATION(ModbusRTU, SlaveAddress, handle, value)
                address > __MODBUS_RTU_MAX_VALID_SLAVE_ADDRESS))
       return SDEVICE_SETTING_SET_STATUS_VALIDATION_ERROR;
 
-   handle->Settings->SlaveAddress = address;
+   device_handle->Settings->SlaveAddress = address;
 
    return SDEVICE_SETTING_SET_STATUS_OK;
 }

@@ -36,7 +36,7 @@ __SDEVICE_INITIALIZE_DYNAMIC_DATA_DECLARATION(SDeviceSettings,);
 
 struct SDeviceSettingDescription
 {
-   SDeviceSettingSetStatus (*WriteValueFunction)(__SDEVICE_HANDLE(SDeviceSettings) *, void *, const void *);
+   SDeviceSettingSetStatus (*WriteValueFunction)(void *, const void *);
    const void *ValueStorage;
    void *Handle;
    size_t Size;
