@@ -60,7 +60,7 @@ static inline bool VirtualMemoryTryFindChunk(__SDEVICE_HANDLE(VirtualMemory) *ha
          *pointer = (VirtualMemoryPointer)
                   {
                      .Chunk = &handle->Constant->Chunks[i],
-                     .Offset = (chunkLastAddress - handle->Constant->Chunks[i].BytesCount + 1) - address
+                     .Offset = address - (chunkLastAddress - handle->Constant->Chunks[i].BytesCount + 1)
                   };
          return true;
       }
