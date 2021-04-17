@@ -37,11 +37,16 @@ static const VirtualMemoryOperation VirtualMemoryOperationsMap[] =
             [VIRTUAL_MEMORY_OPERATION_ID_WRITE] = VirtualMemoryTryWriteOperation
          };
 
+typedef struct {
+   const VirtualMemoryChunk *Chunk;
+   VirtualMemoryBaseType Offset;
+} VirtualMemoryPointer;
+
 static inline bool VirtualMemoryTryFindChunk(__SDEVICE_HANDLE(VirtualMemory) *handle,
                                              VirtualMemoryBaseType address,
-                                             const VirtualMemoryChunk **chunk)
+                                             VirtualMemoryPointer *pointer)
 {
-   if(unlikely(address < handle->Constant->AddressingStart))
+   if(unlikely(address < handle->Constant->AddressingStart || address > handle->Dynamic.AddressingEnd))
       return false;
 
    VirtualMemoryBaseType chunkLastAddress = -1;
@@ -52,12 +57,16 @@ static inline bool VirtualMemoryTryFindChunk(__SDEVICE_HANDLE(VirtualMemory) *ha
 
       if(unlikely(address <= chunkLastAddress))
       {
-         *chunk = &handle->Constant->Chunks[i];
+         *pointer = (VirtualMemoryPointer)
+                  {
+                     .Chunk = &handle->Constant->Chunks[i],
+                     .Offset = (chunkLastAddress - handle->Constant->Chunks[i].BytesCount + 1) - address
+                  };
          return true;
       }
    }
 
-   return false;
+   __builtin_unreachable();
 }
 
 VirtualMemoryOperationStatus VirtualMemoryTryPerformOperation(__SDEVICE_HANDLE(VirtualMemory) *handle,
@@ -73,31 +82,34 @@ VirtualMemoryOperationStatus VirtualMemoryTryPerformOperation(__SDEVICE_HANDLE(V
    if(unlikely(__IS_VALID_VIRTUAL_MEMORY_OPERATION_ID(operation) != true))
       return VIRTUAL_MEMORY_OPERATION_STATUS_DEVICE_ERROR;
 
-   const VirtualMemoryChunk *chunk;
+   VirtualMemoryPointer memory;
 
-   if(unlikely(VirtualMemoryTryFindChunk(handle, address + count - 1, &chunk) != true))
+   if(unlikely(VirtualMemoryTryFindChunk(handle, address, &memory) != true))
       return VIRTUAL_MEMORY_OPERATION_STATUS_DATA_ERROR;
 
    VirtualMemoryOperation operationFunction = VirtualMemoryOperationsMap[operation];
-   VirtualMemoryFunctionParameters operationParameters = { .Offset = 0, .CallArgument = argument };
-   data += count;
+   VirtualMemoryFunctionParameters operationParameters =
+            {
+               .Offset = memory.Offset,
+               .CallArgument = argument,
+               .BytesCount = __MIN(memory.Chunk->BytesCount - memory.Offset, count)
+            };
 
    while(count > 0)
    {
-      /* offset can only appear if there is only one chunk left to process (so no need to zero it again) */
-      if(count < chunk->BytesCount)
-         operationParameters.Offset = chunk->BytesCount - count;
-
-      operationParameters.BytesCount = __MIN(chunk->BytesCount - operationParameters.Offset, count);
-      data -= operationParameters.BytesCount;
-
-      VirtualMemoryOperationStatus operationStatus = operationFunction(handle, data, chunk, &operationParameters);
+      VirtualMemoryOperationStatus operationStatus =
+               operationFunction(handle, data, memory.Chunk, &operationParameters);
 
       if(unlikely(operationStatus != VIRTUAL_MEMORY_OPERATION_STATUS_OK))
          return operationStatus;
 
-      chunk--;
+      memory.Chunk++;
       count -= operationParameters.BytesCount;
+      data += operationParameters.BytesCount;
+      operationParameters.BytesCount = __MIN(memory.Chunk->BytesCount, count);
+
+      if(operationParameters.Offset != 0)
+         operationParameters.Offset = 0;
    }
 
    return VIRTUAL_MEMORY_OPERATION_STATUS_OK;
