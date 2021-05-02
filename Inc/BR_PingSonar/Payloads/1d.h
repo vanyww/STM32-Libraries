@@ -4,30 +4,30 @@
 
 #define __BR_PING_SONAR_MAX_PROFILE_DATA_SIZE 200
 
-#define __BR_PING_SONAR_1D_IS_VALID_MODE_AUTO(value)                                            \
-   ({                                                                                           \
-       __typeof__ (value) _value = (value);                                                     \
-       _value == BR_PING_SONAR_1D_MESSAGE_MODE_MANUAL  ||                                       \
-       _value == BR_PING_SONAR_1D_MESSAGE_MODE_AUTO;                                            \
+#define __BR_PING_SONAR_1D_IS_VALID_MODE_AUTO(value) (  \
+   {                                                    \
+      __typeof__ (value) _value = (value);              \
+      _value == BR_PING_SONAR_1D_MESSAGE_MODE_MANUAL || \
+      _value == BR_PING_SONAR_1D_MESSAGE_MODE_AUTO;     \
    })
 
-#define __BR_PING_SONAR_1D_IS_VALID_GAIN_SETTING(value)                                         \
-   ({                                                                                           \
-       __typeof__ (value) _value = (value);                                                     \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_0P6     ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_1P8     ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_5P5     ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_12P9    ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_30P2    ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_66P1    ||                               \
-       _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_144P0;                                   \
+#define __BR_PING_SONAR_1D_IS_VALID_GAIN_SETTING(value) (       \
+   {                                                            \
+      __typeof__ (value) _value = (value);                      \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_0P6    || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_1P8    || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_5P5    || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_12P9   || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_30P2   || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_66P1   || \
+      _value == BR_PING_SONAR_1D_MESSAGE_GAIN_SETTING_144P0;    \
    })
 
-#define __BR_PING_SONAR_1D_IS_VALID_PING_ENABLED(value)                                         \
-   ({                                                                                           \
-       __typeof__ (value) _value = (value);                                                     \
-       _value == BR_PING_SONAR_1D_MESSAGE_PING_DISABLE ||                                       \
-       _value == BR_PING_SONAR_1D_MESSAGE_PING_ENABLE;                                          \
+#define __BR_PING_SONAR_1D_IS_VALID_PING_ENABLED(value) ( \
+   {                                                      \
+      __typeof__ (value) _value = (value);                \
+      _value == BR_PING_SONAR_1D_MESSAGE_PING_DISABLE ||  \
+      _value == BR_PING_SONAR_1D_MESSAGE_PING_ENABLE;     \
    })
 
 typedef enum

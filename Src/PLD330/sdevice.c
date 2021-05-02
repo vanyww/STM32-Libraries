@@ -1,27 +1,27 @@
 #include "PLD330/core.h"
 
-#define __PLD330_IS_VALID_MICROSTEP_MODE(value)    \
-   ({                                              \
-       __auto_type _value = (value);               \
-       _value == PLD330_MICROSTEP_MODE_1_TO_1  ||  \
-       _value == PLD330_MICROSTEP_MODE_1_TO_2  ||  \
-       _value == PLD330_MICROSTEP_MODE_1_TO_8  ||  \
-       _value == PLD330_MICROSTEP_MODE_1_TO_16;    \
+#define __PLD330_IS_VALID_MICROSTEP_MODE(value) ( \
+   {                                              \
+      __auto_type _value = (value);               \
+      _value == PLD330_MICROSTEP_MODE_1_TO_1  ||  \
+      _value == PLD330_MICROSTEP_MODE_1_TO_2  ||  \
+      _value == PLD330_MICROSTEP_MODE_1_TO_8  ||  \
+      _value == PLD330_MICROSTEP_MODE_1_TO_16;    \
    })
 
-#define __PLD330_IS_VALID_POWER_STATE(value)       \
-   ({                                              \
-       __auto_type _value = (value);               \
-       _value == PLD330_POWER_STATE_ENABLED  ||    \
-       _value == PLD330_POWER_STATE_DISABLED;      \
+#define __PLD330_IS_VALID_POWER_STATE(value) (  \
+   {                                            \
+      __auto_type _value = (value);             \
+      _value == PLD330_POWER_STATE_ENABLED   || \
+      _value == PLD330_POWER_STATE_DISABLED;    \
    })
 
 static const PLD330_MicrostepConfig _microstepConfigs[] =
    {
-       [PLD330_MICROSTEP_MODE_1_TO_1]  = { .Ratio = 1,  .MaxFrequency = 6e3 },
-       [PLD330_MICROSTEP_MODE_1_TO_2]  = { .Ratio = 2,  .MaxFrequency = 12e3 },
-       [PLD330_MICROSTEP_MODE_1_TO_8]  = { .Ratio = 8,  .MaxFrequency = 50e3 },
-       [PLD330_MICROSTEP_MODE_1_TO_16] = { .Ratio = 16, .MaxFrequency = 100e3 }
+      [PLD330_MICROSTEP_MODE_1_TO_1]  = { .Ratio = 1,  .MaxFrequency = 6e3 },
+      [PLD330_MICROSTEP_MODE_1_TO_2]  = { .Ratio = 2,  .MaxFrequency = 12e3 },
+      [PLD330_MICROSTEP_MODE_1_TO_8]  = { .Ratio = 8,  .MaxFrequency = 50e3 },
+      [PLD330_MICROSTEP_MODE_1_TO_16] = { .Ratio = 16, .MaxFrequency = 100e3 }
    };
 
 __SDEVICE_INITIALIZE_DYNAMIC_DATA_DECLARATION(PLD330, handle)
@@ -51,8 +51,7 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, StepAngle, handle, value)
 {
    __SDEVICE_HANDLE(PLD330) *device_handle = handle;
 
-   if(unlikely(device_handle->IsInitialized != true))
-      return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
+   sdevice_assert(device_handle->IsInitialized == true);
 
    float angle = *(float*)value;
 
@@ -68,8 +67,7 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, PowerState, handle, value)
 {
    __SDEVICE_HANDLE(PLD330) *device_handle = handle;
 
-   if(unlikely(device_handle->IsInitialized != true))
-      return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
+   sdevice_assert(device_handle->IsInitialized == true);
 
    PLD330_PowerState powerState = *(PLD330_PowerState*)value;
 
@@ -88,8 +86,7 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, MicrostepMode, handle, value)
 {
    __SDEVICE_HANDLE(PLD330) *device_handle = handle;
 
-   if(unlikely(device_handle->IsInitialized != true))
-      return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
+   sdevice_assert(device_handle->IsInitialized == true);
 
    PLD330_MicrostepMode microstepMode = *(PLD330_MicrostepMode*)value;
 
@@ -114,8 +111,7 @@ __SDEVICE_SET_SETTING_DECLARATION(PLD330, Speed, handle, value)
 {
    __SDEVICE_HANDLE(PLD330) *device_handle = handle;
 
-   if(unlikely(device_handle->IsInitialized != true))
-      return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
+   sdevice_assert(device_handle->IsInitialized == true);
 
    float speed = *(float*)value;
 

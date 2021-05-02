@@ -7,6 +7,12 @@ typedef VirtualMemoryOperationStatus (* VirtualMemoryOperation)(__SDEVICE_HANDLE
                                                                 const VirtualMemoryChunk *,
                                                                 VirtualMemoryFunctionParameters *);
 
+typedef struct
+{
+   const VirtualMemoryChunk *Chunk;
+   VirtualMemoryBaseType Offset;
+} VirtualMemoryPointer;
+
 static VirtualMemoryOperationStatus VirtualMemoryTryReadOperation(__SDEVICE_HANDLE(VirtualMemory) *handle,
                                                                   void *data,
                                                                   const VirtualMemoryChunk *chunk,
@@ -32,15 +38,10 @@ static VirtualMemoryOperationStatus VirtualMemoryTryWriteOperation(__SDEVICE_HAN
 }
 
 static const VirtualMemoryOperation VirtualMemoryOperationsMap[] =
-         {
-            [VIRTUAL_MEMORY_OPERATION_ID_READ] = VirtualMemoryTryReadOperation,
-            [VIRTUAL_MEMORY_OPERATION_ID_WRITE] = VirtualMemoryTryWriteOperation
-         };
-
-typedef struct {
-   const VirtualMemoryChunk *Chunk;
-   VirtualMemoryBaseType Offset;
-} VirtualMemoryPointer;
+   {
+      [VIRTUAL_MEMORY_OPERATION_ID_READ] = VirtualMemoryTryReadOperation,
+      [VIRTUAL_MEMORY_OPERATION_ID_WRITE] = VirtualMemoryTryWriteOperation
+   };
 
 static inline bool VirtualMemoryTryFindChunk(__SDEVICE_HANDLE(VirtualMemory) *handle,
                                              VirtualMemoryBaseType address,
@@ -58,10 +59,11 @@ static inline bool VirtualMemoryTryFindChunk(__SDEVICE_HANDLE(VirtualMemory) *ha
       if(unlikely(address <= chunkLastAddress))
       {
          *pointer = (VirtualMemoryPointer)
-                  {
-                     .Chunk = &handle->Constant->Chunks[i],
-                     .Offset = address - (chunkLastAddress - handle->Constant->Chunks[i].BytesCount + 1)
-                  };
+            {
+               .Chunk = &handle->Constant->Chunks[i],
+               .Offset = address - (chunkLastAddress - handle->Constant->Chunks[i].BytesCount + 1)
+            };
+
          return true;
       }
    }
@@ -76,8 +78,7 @@ VirtualMemoryOperationStatus VirtualMemoryTryPerformOperation(__SDEVICE_HANDLE(V
                                                               void *data,
                                                               VirtualMemoryBaseType count)
 {
-   if(unlikely(handle->IsInitialized != true))
-      return VIRTUAL_MEMORY_OPERATION_STATUS_DEVICE_ERROR;
+   sdevice_assert(handle->IsInitialized == true);
 
    if(unlikely(__IS_VALID_VIRTUAL_MEMORY_OPERATION_ID(operation) != true))
       return VIRTUAL_MEMORY_OPERATION_STATUS_DEVICE_ERROR;
@@ -89,11 +90,11 @@ VirtualMemoryOperationStatus VirtualMemoryTryPerformOperation(__SDEVICE_HANDLE(V
 
    VirtualMemoryOperation operationFunction = VirtualMemoryOperationsMap[operation];
    VirtualMemoryFunctionParameters operationParameters =
-            {
-               .Offset = memory.Offset,
-               .CallArgument = argument,
-               .BytesCount = __MIN(memory.Chunk->BytesCount - memory.Offset, count)
-            };
+      {
+         .Offset = memory.Offset,
+         .CallArgument = argument,
+         .BytesCount = __MIN(memory.Chunk->BytesCount - memory.Offset, count)
+      };
 
    while(count > 0)
    {

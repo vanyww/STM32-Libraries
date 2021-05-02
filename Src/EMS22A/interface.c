@@ -25,8 +25,7 @@ static bool EMS22A_IsFrameParityValid(EMS22A_DataFrame frame)
 
 EMS22A_Status EMS22A_GetPosition(__SDEVICE_HANDLE(EMS22A) *handle, uint16_t *position)
 {
-   if(unlikely(handle->IsInitialized != true))
-      return EMS22A_STATUS_READ_ERROR;
+   sdevice_assert(handle->IsInitialized == true);
 
    EMS22A_DataFrame frame;
 

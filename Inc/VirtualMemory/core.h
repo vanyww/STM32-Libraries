@@ -3,12 +3,18 @@
 #include "SDevice/sdevice_interface.h"
 #include "VirtualMemory/config.h"
 
-#define __IS_VALID_VIRTUAL_MEMORY_OPERATION_ID(value) \
-   ({                                                 \
-      __auto_type _value = (value);                   \
-      _value == VIRTUAL_MEMORY_OPERATION_ID_READ ||   \
-      _value == VIRTUAL_MEMORY_OPERATION_ID_WRITE;    \
+#define __IS_VALID_VIRTUAL_MEMORY_OPERATION_ID(value) ( \
+   {                                                    \
+      __auto_type _value = (value);                     \
+      _value == VIRTUAL_MEMORY_OPERATION_ID_READ   ||   \
+      _value == VIRTUAL_MEMORY_OPERATION_ID_WRITE;      \
    })
+
+typedef enum
+{
+   VIRTUAL_MEMORY_OPERATION_ID_READ,
+   VIRTUAL_MEMORY_OPERATION_ID_WRITE,
+} VirtualMemoryOperationID;
 
 typedef enum
 {
@@ -16,12 +22,6 @@ typedef enum
    VIRTUAL_MEMORY_OPERATION_STATUS_DATA_ERROR,
    VIRTUAL_MEMORY_OPERATION_STATUS_DEVICE_ERROR
 } VirtualMemoryOperationStatus;
-
-typedef enum
-{
-   VIRTUAL_MEMORY_OPERATION_ID_READ,
-   VIRTUAL_MEMORY_OPERATION_ID_WRITE,
-} VirtualMemoryOperationID;
 
 typedef struct
 {
@@ -46,7 +46,8 @@ typedef struct
 
 typedef struct { } __SDEVICE_SETTINGS_DATA(VirtualMemory);
 
-typedef struct {
+typedef struct
+{
    VirtualMemoryBaseType AddressingEnd;
 } __SDEVICE_DYNAMIC_DATA(VirtualMemory);
 

@@ -1,5 +1,7 @@
 #include "SDevice/sdevice_interface.h"
 
+#include <stdint.h>
+
 typedef struct
 {
    bool IsInitialized;
@@ -15,8 +17,7 @@ bool SDeviceInitializeHandleCommon(bool (* initializeDynamicData)(void *),
 {
    SDeviceCommonHandle *commonHandle = handle;
 
-   if(unlikely(commonHandle->IsInitialized == true))
-      return false;
+   sdevice_assert(commonHandle->IsInitialized != true);
 
    commonHandle->Constant = constantData;
    commonHandle->Settings = settingsData;
@@ -24,11 +25,13 @@ bool SDeviceInitializeHandleCommon(bool (* initializeDynamicData)(void *),
    /* in case of setting set call inside dynamic data initialization function, handle must be marked as initialized */
    commonHandle->IsInitialized = true;
 
-   if(unlikely(initializeDynamicData(handle) != true))
-   {
-      commonHandle->IsInitialized = false;
-      return false;
-   }
+   bool __attribute__((unused)) status = initializeDynamicData(handle);
+   sdevice_assert(status == true);
 
    return true;
+}
+
+void SDeviceAssertFailed(char *file, int line)
+{
+   for(;;) { }
 }
