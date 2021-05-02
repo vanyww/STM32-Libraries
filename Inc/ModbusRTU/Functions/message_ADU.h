@@ -8,19 +8,20 @@
 #define __MODBUS_RTU_ADU_FUNCTION_SPECIFIC_DATA_OFFSET (__MODBUS_RTU_ADU_COMMON_DATA_SIZE - __MODBUS_RTU_CRC_SIZE)
 
 #define __MODBUS_RTU_ADU_STRUCT_DECLARATION(function_specific_size, name) \
-    struct __attribute__((packed)) name                                   \
-    {                                                                     \
-        uint8_t SlaveAddress;                                             \
-        uint8_t FunctionCode;                                             \
-        uint8_t FunctionSpecificData[(function_specific_size)];           \
-        uint16_t CRC16;                                                   \
-    }
+   struct __attribute__((packed)) name                                    \
+   {                                                                      \
+      uint8_t SlaveAddress;                                               \
+      uint8_t FunctionCode;                                               \
+      uint8_t FunctionSpecificData[(function_specific_size)];             \
+      uint16_t CRC16;                                                     \
+   }
 
-#define __IS_IMPLEMENTED_MODBUS_RTU_FUNCTION_CODE(code) ({                \
-    __auto_type _code = (code);                                           \
-    _code == MODBUS_RTU_FUNCTION_READ_HOLDING_REGISTERS     ||            \
-    _code == MODBUS_RTU_FUNCTION_PRESET_MULTIPLE_REGISTERS;               \
-})
+#define __IS_IMPLEMENTED_MODBUS_RTU_FUNCTION_CODE(code) (        \
+   {                                                             \
+      __auto_type _code = (code);                                \
+      _code == MODBUS_RTU_FUNCTION_READ_HOLDING_REGISTERS     || \
+      _code == MODBUS_RTU_FUNCTION_PRESET_MULTIPLE_REGISTERS;    \
+   })
 
 /* function codes that are implemented */
 typedef enum

@@ -19,9 +19,9 @@ static uint16_t BR_PingSonarCRC16(void *data, size_t length)
 }
 
 bool BR_PingSonarTrySendMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle,
-                             uint16_t messageID,
-                             const void *payload,
-                             size_t payloadSize)
+                                uint16_t messageID,
+                                const void *payload,
+                                size_t payloadSize)
 {
    typedef __BR_PING_SONAR_MESSAGE_DECLARATION(payloadSize, ) RequestMessage;
    RequestMessage *request = (RequestMessage*)handle->Constant->TransmitBuffer;
@@ -41,10 +41,7 @@ bool BR_PingSonarTrySendMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle,
    return handle->Constant->TrySendFunction(handle, request, sizeof(RequestMessage));
 }
 
-bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle,
-                                   uint16_t messageID,
-                                   void *payload,
-                                   size_t *size)
+bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle, uint16_t *messageID, size_t *payloadSize)
 {
    size_t receiveSize;
    if(unlikely(handle->Constant->TryReceiveFunction(handle, handle->Constant->ReceiveBuffer, &receiveSize) != true))
@@ -53,12 +50,12 @@ bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle,
    if(unlikely(receiveSize < __BR_PING_SONAR_MIN_MESSAGE_SIZE))
       return false;
 
-   size_t payloadSize = ((BR_PingSonarMessagePreamble *)handle->Constant->ReceiveBuffer)->PayloadLength;
+   size_t receivedPayloadSize = ((BR_PingSonarMessagePreamble *)handle->Constant->ReceiveBuffer)->PayloadLength;
 
-   if(unlikely(payloadSize > handle->Constant->ReceiveBufferSize - __BR_PING_SONAR_MIN_MESSAGE_SIZE))
+   if(unlikely(receivedPayloadSize > handle->Constant->ReceiveBufferSize - __BR_PING_SONAR_MIN_MESSAGE_SIZE))
       return false;
 
-   typedef __BR_PING_SONAR_MESSAGE_DECLARATION(payloadSize, ) ResponseMessage;
+   typedef __BR_PING_SONAR_MESSAGE_DECLARATION(receivedPayloadSize, ) ResponseMessage;
    ResponseMessage *response = (ResponseMessage*)handle->Constant->ReceiveBuffer;
 
    if(unlikely(response->Preamble.Start[0] != __BR_PING_SONAR_MESSAGE_START_0))
@@ -67,16 +64,11 @@ bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *handle,
    if(unlikely(response->Preamble.Start[1] != __BR_PING_SONAR_MESSAGE_START_1))
       return false;
 
-   if(unlikely(response->Preamble.MessageID != messageID))
-      return false;
-
    if(unlikely(response->CRC16 != BR_PingSonarCRC16(response, sizeof(ResponseMessage) - __BR_PING_SONAR_CRC_SIZE)))
       return false;
 
-   if(payload != NULL)
-      memcpy(payload, response->Payload, payloadSize);
-
-   *size = payloadSize;
+   *messageID = response->Preamble.MessageID;
+   *payloadSize = receivedPayloadSize;
 
    return true;
 }

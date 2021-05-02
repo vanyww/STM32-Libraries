@@ -13,4 +13,4 @@
    }
 
 bool BR_PingSonarTrySendMessage(__SDEVICE_HANDLE(BR_PingSonar) *, uint16_t, const void *, size_t);
-bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *, uint16_t, void *, size_t *);
+bool BR_PingSonarTryReceiveMessage(__SDEVICE_HANDLE(BR_PingSonar) *, uint16_t *, size_t *);

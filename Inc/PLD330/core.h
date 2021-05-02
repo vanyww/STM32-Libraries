@@ -2,8 +2,12 @@
 
 #include "SDevice/sdevice_interface.h"
 
-#define __PLD330_GET_ANOTHER_DIRECTION(direction)                                                               \
-        (((direction) == PLD330_DIRECTION_FORWARD) ? PLD330_DIRECTION_BACKWARD : PLD330_DIRECTION_FORWARD)
+#include <stdint.h>
+
+#define __PLD330_GET_ANOTHER_DIRECTION(direction) ( \
+   ((direction) == PLD330_DIRECTION_FORWARD) ?      \
+            PLD330_DIRECTION_BACKWARD :             \
+            PLD330_DIRECTION_FORWARD)
 
 typedef struct
 {
@@ -50,7 +54,7 @@ typedef struct
    bool (* SetPulsesFrequencyFunction)(__SDEVICE_HANDLE(PLD330) *, uint_fast32_t);
    void (* MoveCompletedCallback)(__SDEVICE_HANDLE(PLD330) *);
    uint_fast32_t MaxOneTimePulses;
-}__SDEVICE_CONSTANT_DATA(PLD330);
+} __SDEVICE_CONSTANT_DATA(PLD330);
 
 typedef struct
 {
@@ -58,7 +62,7 @@ typedef struct
    float Speed;
    PLD330_MicrostepMode MicrostepMode;
    PLD330_PowerState PowerState;
-}__SDEVICE_SETTINGS_DATA(PLD330);
+} __SDEVICE_SETTINGS_DATA(PLD330);
 
 typedef struct
 {
@@ -66,7 +70,7 @@ typedef struct
    const PLD330_MicrostepConfig *MicrostepsConfig;
    PLD330_Direction Direction;
    bool IsMovingInProgress;
-}__SDEVICE_DYNAMIC_DATA(PLD330);
+} __SDEVICE_DYNAMIC_DATA(PLD330);
 
 __SDEVICE_HANDLE_DEFINITION(PLD330);
 

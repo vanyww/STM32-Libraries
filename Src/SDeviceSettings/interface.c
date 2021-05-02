@@ -9,8 +9,7 @@ SDeviceSettingUpdateStatus SDeviceSettingsTryUpdateValue(__SDEVICE_HANDLE(SDevic
                                                          size_t offset,
                                                          size_t length)
 {
-   if(unlikely(handle->IsInitialized != true))
-      return SDEVICE_SETTING_UPDATE_STATUS_CRITICAL_ERROR;
+   sdevice_assert(handle->IsInitialized == true);
 
    const SDeviceSettingDescription *settingDescription = &handle->Constant->SettingDescriptions[settingID];
 

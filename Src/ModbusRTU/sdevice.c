@@ -17,8 +17,7 @@ __SDEVICE_SET_SETTING_DECLARATION(ModbusRTU, SlaveAddress, handle, value)
 {
    __SDEVICE_HANDLE(ModbusRTU) *device_handle = handle;
 
-   if(unlikely(device_handle->IsInitialized != true))
-      return SDEVICE_SETTING_SET_STATUS_SET_ERROR;
+   sdevice_assert(device_handle->IsInitialized == true);
 
    uint8_t address = *(uint8_t*)value;
 

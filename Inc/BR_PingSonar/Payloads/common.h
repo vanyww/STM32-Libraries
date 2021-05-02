@@ -31,7 +31,7 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-   uint16_t NackedID;
+   uint16_t NAckedID;
    char NackMessage[];
 } BR_PingSonarCommonMessageNAckPayload;
 

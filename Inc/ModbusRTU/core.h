@@ -2,6 +2,7 @@
 
 #include "SDevice/sdevice_interface.h"
 
+#include <stdint.h>
 #include <stddef.h>
 
 #define __MODBUS_RTU_MAX_ADU_SIZE 0xFF
@@ -72,18 +73,18 @@ typedef struct
                                                              const WriteRegistersParameters *);
    void *ReceiveBuffer;
    void *TransmitBuffer;
-}__SDEVICE_CONSTANT_DATA(ModbusRTU);
+} __SDEVICE_CONSTANT_DATA(ModbusRTU);
 
 typedef struct
 {
    uint8_t SlaveAddress;
-}__SDEVICE_SETTINGS_DATA(ModbusRTU);
+} __SDEVICE_SETTINGS_DATA(ModbusRTU);
 
 typedef struct
 {
    void *RequestFunctionSpecificData;
    void *ReplyFunctionSpecificData;
-}__SDEVICE_DYNAMIC_DATA(ModbusRTU);
+} __SDEVICE_DYNAMIC_DATA(ModbusRTU);
 
 __SDEVICE_HANDLE_DEFINITION(ModbusRTU);
 

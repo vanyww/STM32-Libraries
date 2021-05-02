@@ -2,6 +2,8 @@
 
 #include "SDevice/sdevice_interface.h"
 
+#include <stdint.h>
+
 #define __EMS22A_FULL_TURN_VALUE 1024
 
 typedef enum
@@ -21,11 +23,11 @@ typedef struct
 {
    bool (* TryReadFrameFunction)(__SDEVICE_HANDLE(EMS22A) *, uint16_t *);
    void *UserData;
-}__SDEVICE_CONSTANT_DATA(EMS22A);
+} __SDEVICE_CONSTANT_DATA(EMS22A);
 
-typedef struct { }__SDEVICE_SETTINGS_DATA(EMS22A);
+typedef struct { } __SDEVICE_SETTINGS_DATA(EMS22A);
 
-typedef struct { }__SDEVICE_DYNAMIC_DATA(EMS22A);
+typedef struct { } __SDEVICE_DYNAMIC_DATA(EMS22A);
 
 __SDEVICE_HANDLE_DEFINITION(EMS22A);
 

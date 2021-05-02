@@ -21,8 +21,7 @@ static inline ModbusRTU_Status ModbusRTU_ProcessFunction(__SDEVICE_HANDLE(Modbus
 
 size_t ModbusRTU_ProcessRequest(__SDEVICE_HANDLE(ModbusRTU) *handle, size_t requestSize)
 {
-   if(unlikely(handle->IsInitialized != true))
-      return 0;
+   sdevice_assert(handle->IsInitialized == true);
 
    ModbusRTU_RequestProcessingCommonData request;
    ModbusRTU_Status operationStatus;
