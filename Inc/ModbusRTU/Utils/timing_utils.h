@@ -20,8 +20,9 @@
             __MODBUS_RTU_INTERFRAME_DELAY_PREDEFINED :                                                            \
             __MODBUS_RTU_CHARS_TO_SECONDS_DELAY(baud, __MODBUS_RTU_INTERFRAME_DELAY_CHARS, char_size))
 
-#define __MODBUS_RTU_TIMER_PERIOD 1e-6f
+#define __MODBUS_RTU_TIMER_DIVIDER 1000000
+#define __MODBUS_RTU_TIMER_PERIOD (1.f / __MODBUS_RTU_TIMER_DIVIDER)
 
 /* gcc's ceilf is compiler intrinsic, so we can use it as constant value */
-#define __MODBUS_RTU_DELAY_TO_TIMER_PERIOD(delay) (__builtin_ceilf((delay) / __MODBUS_RTU_TIMER_PERIOD) - 1.f)
-#define __MODBUS_RTU_GET_TIMER_PRESCALER(clock) (__builtin_ceilf((clock) * __MODBUS_RTU_TIMER_PERIOD) - 1.f)
+#define __MODBUS_RTU_DELAY_TO_TIMER_PERIOD(delay) (ceilf((delay) * __MODBUS_RTU_TIMER_DIVIDER) - 1)
+#define __MODBUS_RTU_GET_TIMER_PRESCALER(clock) ((clock) / __MODBUS_RTU_TIMER_DIVIDER - 1)
